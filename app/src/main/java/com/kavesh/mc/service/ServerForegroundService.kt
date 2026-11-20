@@ -41,7 +41,6 @@ class ServerForegroundService : Service() {
         const val EXTRA_SERVER_NAME = "server_name"
         const val EXTRA_PORT = "port"
 
-        // Passed in-memory for simplicity when starting from ViewModel
         var pendingConfig: ServerConfig? = null
     }
 
@@ -126,7 +125,6 @@ class ServerForegroundService : Service() {
             }
 
             try {
-                // Start optional tunnel if selected
                 val mode = ServerRuntimeState.tunnelMode.value
                 if (mode != TunnelMode.LOCAL) {
                     startTunnelProcess(nativeDir, mode, config.port)
@@ -161,10 +159,11 @@ class ServerForegroundService : Service() {
                 updateNotification("${config.name} is ONLINE", "Join at $localIp")
                 ServerRuntimeState.appendLog(LogLevel.INFO, "Server listening on $localIp (0.0.0.0:${config.port})")
 
+                val ansiRegex = Regex("""\u001B\[[;\d]*m""")
                 val reader = BufferedReader(InputStreamReader(proc.inputStream))
                 var line: String?
                 while (reader.readLine().also { line = it } != null) {
-                    val clean = line!!.replace(Regex("\u001B\[[;\d]*m"), "")
+                    val clean = line!!.replace(ansiRegex, "")
                     val level = when {
                         clean.contains("WARN", ignoreCase = true) -> LogLevel.WARN
                         clean.contains("ERROR", ignoreCase = true) -> LogLevel.ERROR
@@ -207,8 +206,8 @@ class ServerForegroundService : Service() {
                 tunnelProcess = proc
                 val reader = BufferedReader(InputStreamReader(proc.inputStream))
                 var line: String?
-                val boreRegex = Regex("bore\.pub:\d+")
-                val playitRegex = Regex("[a-zA-Z0-9-]+\.gl\.joinmc\.link(:\d+)?")
+                val boreRegex = Regex("""bore\.pub:\d+""")
+                val playitRegex = Regex("""[a-zA-Z0-9-]+\.gl\.joinmc\.link(:\d+)?""")
 
                 while (reader.readLine().also { line = it } != null) {
                     val text = line!!
