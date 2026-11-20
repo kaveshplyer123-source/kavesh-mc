@@ -143,8 +143,7 @@ fun ConsoleScreen(viewModel: KaveshViewModel) {
                 }
                 IconButton(
                     onClick = {
-                        val allText = logs.joinToString("
-") { "[${it.timestamp}] [${it.level}] ${it.message}" }
+                        val allText = logs.joinToString(separator = "\n") { "[${it.timestamp}] [${it.level}] ${it.message}" }
                         val share = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, allText)
