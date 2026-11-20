@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.KaveshMC" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#121412</item>
+        <item name="android:navigationBarColor">#121412</item>
+        <item name="android:windowBackground">#121412</item>
+    </style>
+</resources>
